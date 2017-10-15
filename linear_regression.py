@@ -1,9 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 class LinearRegression:
     def __init__(self, loss_axis=None, plot_axis=None):
-        self.W = np.array([0.0, 0.0])
+        self.W = np.array([0.0])
+        self.b = np.array([0.0])
 
         # variables used for plotting the loss and model prediction
         self.loss_axis = loss_axis
@@ -12,7 +14,7 @@ class LinearRegression:
         self.plot_line = None
 
     def compute_loss(self, X, y, reg):
-        '''Compute the Mean-squared loss.
+        """Compute the Mean-squared loss.
            Inputs:
                 X  - An array of training inputs of size N
                 y  - An array of training values of size N
@@ -23,33 +25,31 @@ class LinearRegression:
 
            Remember to apply regularization to your Mean-squared loss!
            Try Weight Decay first but feel free to try others
-       '''
-        ##
-        # TODO YOUR CODE HERE
-        ##
-        loss = 0
-        dW = np.zeros(self.W.shape)
+       """
+        loss = np.mean((self.predict(X) - y) ** 2, axis=0) + reg * (self.W.T * self.W)
+        dW = np.mean(2 * (self.predict(X) - y) * X, axis=0) + 2 * reg * self.W
+        db = np.mean(2 * (self.predict(X) - y), axis=0)
+
+        assert(dW.shape == self.W.shape)
 
         # End
-        return loss, dW
+        return loss, dW, db
 
     def predict(self, X):
-        '''Execute our linear model
+        """Execute our linear model
            y = wX + b
            Inputs:
                X - An array of inputs of size N
            Returns:
                Array of predicted values of size N
-        '''
-        y = np.zeros(X.shape)
-        ##
-        # TODO YOUR CODE HERE
-        ##
+        """
+
+        y = self.W * X + self.b
+
         return y
 
-
-    def train(self, X, y, learning_rate, num_iters, do_live_plotting=True):
-        '''Do gradient descent and iteratively update your weights based on
+    def train(self, X, y, learning_rate, num_iters, reg, do_live_plotting=True):
+        """Do gradient descent and iteratively update your weights based on
            the loss
            Inputs:
                X             - array of training inputs of size N
@@ -60,14 +60,18 @@ class LinearRegression:
            Note:
                After each iteration make sure you append the loss for that set of
                weights to the loss_history list, else the visualization won't work!
-           '''
+        """
 
         loss_history = list()
 
         for i in range(0, num_iters):
             ##
-            # TODO YOUR CODE HERE
+            # YOUR CODE HERE
             ##
+            loss, dw, db = self.compute_loss(X, y, reg)
+            loss_history.append(loss)
+            self.W -= learning_rate * dw
+            self.b -= learning_rate * db
 
             if do_live_plotting:
                 self.update_live_plot(X, loss_history)

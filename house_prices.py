@@ -65,9 +65,10 @@ if __name__ == "__main__":
     # TODO - Tune these. You may want to set aside a section of your training
     # data as your "validation" set and try lots of values to see what works best
     ##
-    learning_rate = 0
+    learning_rate = 1e-7
     number_of_iterations = 50
-    regularisation_strength = 0
+
+    regularisation_strength = 1000000
 
     # May want to set this to false when tuning your hypeparameters
     animate = False
@@ -94,6 +95,7 @@ if __name__ == "__main__":
     test_acc = calculate_accuracy(linear_regression, test_X, test_y)
 
     print("W: {}".format(linear_regression.W))
+    print "b: {}".format(linear_regression.b)
     print("Training Accuracy: {}".format(training_acc))
     print("Test Accuracy: {}".format(test_acc))
 
@@ -102,7 +104,8 @@ if __name__ == "__main__":
     W = np.linalg.pinv(Xe.T).dot(y)
     print("W: {}".format(W))
     l2 = LinearRegression()
-    l2.W = W
+    l2.W = W[[0]]
+    l2.b = W[[1]]
     plt.plot(X, l2.predict(X))
     print("Training Accuracy: {}".format(calculate_accuracy(l2, X, y)))
     print("Test Accuracy: {}".format(calculate_accuracy(l2, test_X, test_y)))
